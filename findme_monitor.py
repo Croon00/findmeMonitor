@@ -177,7 +177,7 @@ def main():
                 log.info("state에 없음 -> NEW PRODUCT (available=true)")
                 if not INIT_ONLY:
                     send_discord_embed(
-                        title=f"🆕 NEW (판매중) · {snap['title']}",
+                        title=f"🆕 NEW · {snap['title']}",
                         url=snap["url"],
                         fields=build_fields_for_snap(snap),
                         footer=f"handle: {handle}",
