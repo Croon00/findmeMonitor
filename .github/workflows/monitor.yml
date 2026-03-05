@@ -14,6 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore state cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            findme_state.json
+          key: findme-state-${{ github.run_id }}
+          restore-keys: |
+            findme-state-
+          
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
