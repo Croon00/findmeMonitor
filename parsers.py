@@ -1,5 +1,6 @@
-# parsers.py
 import re
+from dateutil import parser as dtparser
+from config import JST
 
 def strip_html_to_text(html: str) -> str:
     if not html:
@@ -46,3 +47,29 @@ def jp_date_to_kr(s: str | None) -> str | None:
     out = re.sub(r"\s+", " ", out).strip()
     out = re.sub(r"\s*-\s*", " - ", out)
     return out
+
+def parse_order_window_from_text(text: str):
+    """
+    body_html -> text로 만든 문자열에서
+    '2026年3月1日 22:00 〜 2026年4月6日 13:00' 같은 예약기간을 찾아
+    (start_datetime, end_datetime) 반환
+    """
+    if not text:
+        return None, None
+
+    pat = r"(\d{4}年\s*\d{1,2}月\s*\d{1,2}日\s*\d{1,2}:\d{2}).*?(?:〜|~|-).*?(\d{4}年\s*\d{1,2}月\s*\d{1,2}日\s*\d{1,2}:\d{2})"
+    m = re.search(pat, text, flags=re.S)
+    if not m:
+        return None, None
+
+    def jp_to_iso(s: str) -> str:
+        s = re.sub(r"\s+", " ", s.strip())
+        s = s.replace("年", "-").replace("月", "-").replace("日", "")
+        return s
+
+    try:
+        start = dtparser.parse(jp_to_iso(m.group(1))).replace(tzinfo=JST)
+        end = dtparser.parse(jp_to_iso(m.group(2))).replace(tzinfo=JST)
+        return start, end
+    except Exception:
+        return None, None
