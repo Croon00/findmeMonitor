@@ -11,7 +11,6 @@ ERROR_LOG_FILE = "findme_monitor.error.log"
 JST = timezone(timedelta(hours=9))
 
 DISCORD_WEBHOOK = os.environ.get("DISCORD_WEBHOOK", "").strip()
-
 INIT_ONLY = False
 DRY_RUN = False
 ALERT_SOLDOUT_AND_RESTOCK = True
