@@ -19,6 +19,12 @@ from discord_client import send_discord_embed
 
 log = setup_logger()
 
+# Discord embed colors
+COLOR_BLUE = 0x3498DB
+COLOR_RED = 0xED4245
+COLOR_GREEN = 0x57F287
+COLOR_YELLOW = 0xFEE75C
+
 
 def fetch_product_page_extra(handle: str) -> dict:
     url = product_url(handle)
@@ -176,6 +182,7 @@ def main():
             if prev is None:
                 log.info("state에 없음 -> NEW PRODUCT (available=true)")
                 if not INIT_ONLY:
+                    new_color = COLOR_GREEN if snap.get("stock_notice_kr") else COLOR_BLUE
                     send_discord_embed(
                         title=f"🆕 NEW · {snap['title']}",
                         url=snap["url"],
@@ -183,6 +190,7 @@ def main():
                         footer=f"handle: {handle}",
                         image_url=snap.get("image_url"),
                         author_name=snap.get("artist"),
+                        color=new_color,
                     )
                 state[handle] = {"snap": snap, "notified": {"ending_24h": False}}
             else:
@@ -202,6 +210,7 @@ def main():
                         footer=f"handle: {handle}",
                         image_url=prev_snap.get("image_url"),
                         author_name=prev_snap.get("artist"),
+                        color=COLOR_RED,
                     )
 
             if PRUNE_SOLD_OUT_FROM_STATE and handle in state:
@@ -233,6 +242,7 @@ def main():
                             footer=f"handle: {handle}",
                             image_url=snap.get("image_url"),
                             author_name=snap.get("artist"),
+                            color=COLOR_YELLOW,
                         )
                         notified["ending_24h"] = True
                         state[handle] = {"snap": snap, "notified": notified}

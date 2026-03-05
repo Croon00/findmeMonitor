@@ -14,6 +14,7 @@ def send_discord_embed(
     footer: str | None = None,
     image_url: str | None = None,
     author_name: str | None = None,
+    color: int | None = None,
 ) -> None:
     log.info(f"DISCORD EMBED SEND: {title} ({url})")
 
@@ -31,6 +32,9 @@ def send_discord_embed(
         "description": (description or "")[:4096],
         "timestamp": datetime.now(JST).isoformat(),
     }
+
+    if color is not None:
+        embed["color"] = color
 
     if author_name:
         embed["author"] = {"name": vendor_display(author_name)[:256]}
